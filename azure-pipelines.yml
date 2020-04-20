@@ -9,14 +9,41 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+jobs:
+  - job: Test
+    pool:
+      vmImage: 'ubuntu-latest'            
+    steps:
+    - script: echo Hello, world!
+      displayName: 'Run a one-line script'
 
-- script: echo Ein custom script!
-  displayName: 'Run custom script'
+    - script: echo Ein custom script!
+      displayName: 'Run custom script'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    - script: |
+        echo Add other tasks to build, test, and deploy your project.
+        echo See https://aka.ms/yaml
+      displayName: 'Run a multi-line script'
+
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: '$(System.DefaultWorkigDirectory)'
+        artifactName: WebSite
+        
+  - job: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: none
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts'
+      inputs:
+        artifactName: WebSite
+        downloadPath: '$(System.DefaultWorkingDirectory)'
+        
+    dependsOn: Build
+    condition: succeeded()
