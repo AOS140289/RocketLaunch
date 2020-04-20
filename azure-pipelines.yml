@@ -10,9 +10,9 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-  - stage: T
+- stage: T
     pool: 
-      vmImage: 'ubuntu-latest'            
+      vmImage: 'ubuntu-latest'
     jobs:
     - job: Test1        
       steps:
@@ -27,9 +27,11 @@ stages:
           echo See https://aka.ms/yaml
          displayName: 'Run a multi-line script'
 
-  - stage: B
+- stage: B
     pool: 
       vmImage: 'ubuntu-latest'
+    dependsOn: T
+    condition: succeeded('T')
     jobs:
     - job: Build
       steps:
@@ -38,9 +40,11 @@ stages:
           pathtoPublish: '$(System.DefaultWorkigDirectory)'
           artifactName: WebSite
   
-  - stage: D
+- stage: D
     pool: 
-      vmImage: 'ubuntu-latest'    
+      vmImage: 'ubuntu-latest'
+    dependsOn: B
+    condition: succeeded('B')
     jobs:
     - job: Deploy      
       steps:
@@ -50,6 +54,3 @@ stages:
         inputs:
           artifactName: WebSite
           downloadPath: '$(System.DefaultWorkingDirectory)'
-
-      dependsOn: Build
-      condition: succeeded()
