@@ -11,46 +11,46 @@ pool:
 
 stages:
 - stage: T
-    pool: 
-      vmImage: 'ubuntu-latest'
-    jobs:
-    - job: Test1        
-      steps:
-      - script: echo Hello, world!
-        displayName: 'Run a one-line script'
+  pool: 
+    vmImage: 'ubuntu-latest'
+  jobs:
+  - job: Test1        
+    steps:
+    - script: echo Hello, world!
+      displayName: 'Run a one-line script'
 
-       - script: echo Ein custom script!
-         displayName: 'Run custom script'
+    - script: echo Ein custom script!
+       displayName: 'Run custom script'
 
-       - script: |
-          echo Add other tasks to build, test, and deploy your project.
-          echo See https://aka.ms/yaml
-         displayName: 'Run a multi-line script'
+    - script: |
+        echo Add other tasks to build, test, and deploy your project.
+        echo See https://aka.ms/yaml
+      displayName: 'Run a multi-line script'
 
 - stage: B
-    pool: 
-      vmImage: 'ubuntu-latest'
-    dependsOn: T
-    condition: succeeded('T')
-    jobs:
-    - job: Build
-      steps:
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: '$(System.DefaultWorkigDirectory)'
-          artifactName: WebSite
+  dependsOn: T
+  condition: succeeded('T')
+  pool: 
+    vmImage: 'ubuntu-latest'    
+  jobs:
+  - job: Build
+    steps:
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(System.DefaultWorkigDirectory)'
+      artifactName: WebSite
   
 - stage: D
-    pool: 
-      vmImage: 'ubuntu-latest'
-    dependsOn: B
-    condition: succeeded('B')
-    jobs:
-    - job: Deploy      
-      steps:
-      - checkout: none
-      - task: DownloadBuildArtifacts@0
-        displayName: 'Download Build Artifacts'
-        inputs:
-          artifactName: WebSite
-          downloadPath: '$(System.DefaultWorkingDirectory)'
+  dependsOn: B
+  condition: succeeded('B')
+  pool: 
+    vmImage: 'ubuntu-latest'    
+  jobs:
+  - job: Deploy      
+    steps:
+    - checkout: none
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts'
+      inputs:
+        artifactName: WebSite
+        downloadPath: '$(System.DefaultWorkingDirectory)'
