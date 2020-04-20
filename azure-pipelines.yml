@@ -20,7 +20,7 @@ stages:
       displayName: 'Run a one-line script'
 
     - script: echo Ein custom script!
-       displayName: 'Run custom script'
+      displayName: 'Run custom script'
 
     - script: |
         echo Add other tasks to build, test, and deploy your project.
@@ -35,10 +35,10 @@ stages:
   jobs:
   - job: Build
     steps:
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: '$(System.DefaultWorkigDirectory)'
-      artifactName: WebSite
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: '$(System.DefaultWorkigDirectory)'
+        artifactName: WebSite
   
 - stage: D
   dependsOn: B
